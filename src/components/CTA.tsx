@@ -1,6 +1,7 @@
 import { ArrowRight } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useInView } from 'react-intersection-observer';
+import { Link } from 'react-router-dom';
 
 export default function CTA() {
   const [ref, inView] = useInView({
@@ -45,19 +46,19 @@ export default function CTA() {
           </h2>
         </motion.div>
         <motion.div variants={itemVariants} className="mt-8 flex lg:mt-0 lg:flex-shrink-0 space-x-4">
-          <a
-            href="/signup"
+          <Link
+            to="/signup"
             className="inline-flex items-center justify-center px-8 py-4 border border-transparent text-lg font-medium rounded-xl text-green-700 bg-white hover:bg-green-50 transform hover:scale-105 transition-all duration-200 shadow-lg hover:shadow-xl"
           >
             Get started
             <ArrowRight className="ml-2 h-5 w-5" />
-          </a>
-          <a
-            href="/learn-more"
+          </Link>
+          <Link
+            to="/learn-more"
             className="inline-flex items-center justify-center px-8 py-4 border-2 border-white text-lg font-medium rounded-xl text-white hover:bg-white hover:text-green-700 transform hover:scale-105 transition-all duration-200"
           >
             Learn more
-          </a>
+          </Link>
         </motion.div>
       </motion.div>
     </div>
