@@ -21,6 +21,7 @@ import ResourceFinder from './pages/ResourceFinder';
 import UserProfile from './pages/UserProfile';
 import EditProfile from './pages/EditProfile';
 import CarbonFootprint from './pages/CarbonFootprint';
+import { SpeedInsights } from '@vercel/speed-insights/react';
 
 function App() {
   const { setUser, user } = useAuthStore(state => ({ setUser: state.setUser, user: state.user }));
@@ -63,6 +64,7 @@ function App() {
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
         </main>
+        <SpeedInsights />
       </div>
     </Router>
   );
