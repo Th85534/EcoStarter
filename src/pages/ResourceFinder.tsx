@@ -39,6 +39,30 @@ export default function ResourceFinder() {
       category: 'renewable-energy',
       link: 'https://www.energysage.com/energy-efficiency/ways-to-save-energy/',
       image: 'https://images.unsplash.com/photo-1473341304170-971dccb5ac1e?auto=format&fit=crop&w=800'
+    },
+    {
+      id: '3',
+      title: 'Sustainable Living Tips',
+      description: 'Practical advice for living a more sustainable and eco-friendly lifestyle.',
+      category: 'sustainable-living',
+      link: 'https://www.sustainablejungle.com/sustainable-living/sustainable-living-tips/',
+      image: 'https://images.unsplash.com/photo-1489171078254-c3365d6e359f?q=80&w=1931&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'
+    },
+    {
+      id: '4',
+      title: 'Gardening for Beginners',
+      description: 'A beginner\'s guide to starting your own garden and growing your own food.',
+      category: 'gardening',
+      link: 'https://www.thespruce.com/gardening-for-beginners-1403372',
+      image: 'https://images.unsplash.com/photo-1523301343968-6a6ebf63c672?auto=format&fit=crop&w=800'
+    },
+    {
+      id: '5',
+      title: 'Recycling Basics',
+      description: 'Learn the basics of recycling and how to properly sort your waste.',
+      category: 'recycling',
+      link: 'https://www.epa.gov/recycle/recycling-basics',
+      image: 'https://images.unsplash.com/photo-1620429405088-b41981579f19?q=80&w=1887&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'
     }
   ];
 
