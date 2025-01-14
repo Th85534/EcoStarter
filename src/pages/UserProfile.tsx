@@ -23,7 +23,7 @@ export default function UserProfile() {
   };
 
   return (
-    <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pt-36">
+    <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pt-40">
       <div className="bg-white rounded-lg shadow-md border border-gray-200 overflow-hidden">
         <div className="relative z-10">
           {profile?.coverImage ? (

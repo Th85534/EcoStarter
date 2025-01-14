@@ -5,6 +5,7 @@ import { useAuthStore } from '../store/authStore';
 import { db } from '../lib/firebase';
 import { collection, query, orderBy, getDocs, addDoc, updateDoc, doc, arrayUnion, arrayRemove, Timestamp, deleteDoc } from 'firebase/firestore';
 import { uploadImage } from '../lib/cloudinary';
+import { useUserStore } from '../store/userStore';
 
 interface Comment {
   id: string;
@@ -29,6 +30,7 @@ interface Post {
 
 export default function CommunitySpace() {
   const { user } = useAuthStore();
+  const { profile } = useUserStore();
   const [posts, setPosts] = useState<Post[]>([]);
   const [newPost, setNewPost] = useState('');
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
@@ -36,7 +38,7 @@ export default function CommunitySpace() {
   const [loading, setLoading] = useState(false);
   const [commentContent, setCommentContent] = useState<{ [key: string]: string }>({});
   const [showComments, setShowComments] = useState<{ [key: string]: boolean }>({});
-
+  
   useEffect(() => {
     loadPosts();
   }, []);
@@ -85,8 +87,8 @@ export default function CommunitySpace() {
 
       const postData = {
         userId: user.uid,
-        userName: user?.displayName || 'Anonymous',
-        userAvatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=' + user.uid,
+        userName: user?.displayName || profile?.displayName || 'Anonymus',
+        userAvatar: profile?.profileImage || 'https://api.dicebear.com/7.x/avataaars/svg?seed=' + user.uid,
         content: newPost,
         image: imageUrl,
         likes: [],
@@ -144,8 +146,8 @@ export default function CommunitySpace() {
       const newComment = {
         id: crypto.randomUUID(),
         userId: user.uid,
-        userName: user.email?.split('@')[0] || 'Anonymous',
-        userAvatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=' + user.uid,
+        userName: user?.displayName || profile?.displayName || 'Anonymous',
+        userAvatar: profile?.profileImage || 'https://api.dicebear.com/7.x/avataaars/svg?seed=' + user.uid,
         content: commentContent[postId],
         timestamp: Timestamp.now()
       };
@@ -255,7 +257,7 @@ export default function CommunitySpace() {
                 <img
                   src={post.userAvatar}
                   alt={post.userName}
-                  className="h-10 w-10 rounded-full"
+                  className="h-10 w-10 rounded-full object-cover"
                 />
                 <div className="ml-3">
                   <p className="text-sm font-medium text-gray-900">{post.userName}</p>
@@ -290,6 +292,7 @@ export default function CommunitySpace() {
             )}
             <div className="mt-4 flex items-center space-x-4">
               <button
+                type="button"
                 onClick={() => handleLike(post.id)}
                 className={`flex items-center space-x-1 text-sm ${
                   user && post.likes.includes(user.uid) ? 'text-green-600' : 'text-gray-500'
@@ -299,13 +302,14 @@ export default function CommunitySpace() {
                 <span>{post.likes.length}</span>
               </button>
               <button
+                type="button"
                 onClick={() => setShowComments({ ...showComments, [post.id]: !showComments[post.id] })}
                 className="flex items-center space-x-1 text-sm text-gray-500 hover:text-green-600"
               >
                 <MessageSquare className="h-5 w-5" />
                 <span>{post.comments.length}</span>
               </button>
-              <button className="flex items-center space-x-1 text-sm text-gray-500 hover:text-green-600">
+              <button type='button' className="flex items-center space-x-1 text-sm text-gray-500 hover:text-green-600">
                 <Share2 className="h-5 w-5" />
                 <span>Share</span>
               </button>
@@ -339,9 +343,9 @@ export default function CommunitySpace() {
                 {user && (
                   <div className="flex items-start space-x-3 mt-4">
                     <img
-                      src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${user.uid}`}
+                      src={ profile?.profileImage || `https://api.dicebear.com/7.x/avataaars/svg?seed=${user.uid}`}
                       alt="Your avatar"
-                      className="h-8 w-8 rounded-full"
+                      className="h-8 w-8 rounded-full object-cover"
                     />
                     <div className="flex-1">
                       <input

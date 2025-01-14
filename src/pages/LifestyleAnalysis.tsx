@@ -48,7 +48,7 @@ export default function LifestyleAnalysis() {
                 </label>
                 <select
                   {...register('transportation', { required: 'This field is required' })}
-                  className="mt-1 p-2 block w-full rounded-md border-gray-300 shadow-sm outline-none focus:border-2 focus:border-green-500 focus:ring-green-500"
+                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500"
                 >
                   <option value="">Select an option</option>
                   <option value="car">Personal Car</option>
@@ -68,7 +68,7 @@ export default function LifestyleAnalysis() {
                 </label>
                 <select
                   {...register('diet', { required: 'This field is required' })}
-                  className="mt-1 p-2 block w-full rounded-md border-gray-300 shadow-sm outline-none focus:border-2 focus:border-green-500 focus:ring-green-500"
+                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500"
                 >
                   <option value="">Select an option</option>
                   <option value="omnivore">Omnivore</option>
@@ -88,7 +88,7 @@ export default function LifestyleAnalysis() {
                 </label>
                 <select
                   {...register('energy', { required: 'This field is required' })}
-                  className="mt-1 p-2 block w-full rounded-md border-gray-300 shadow-sm outline-none focus:border-2 focus:border-green-500 focus:ring-green-500"
+                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500"
                 >
                   <option value="">Select an option</option>
                   <option value="standard">Standard Grid Energy</option>
@@ -107,7 +107,7 @@ export default function LifestyleAnalysis() {
                 </label>
                 <select
                   {...register('shopping', { required: 'This field is required' })}
-                  className="mt-1 p-2 block w-full rounded-md border-gray-300 shadow-sm outline-none focus:border-2 focus:border-green-500 focus:ring-green-500"
+                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500"
                 >
                   <option value="">Select an option</option>
                   <option value="new">Mostly New Items</option>
@@ -126,7 +126,7 @@ export default function LifestyleAnalysis() {
                 </label>
                 <select
                   {...register('waste', { required: 'This field is required' })}
-                  className="mt-1 p-2 block w-full rounded-md border-gray-300 shadow-sm outline-none focus:border-2 focus:border-green-500 focus:ring-green-500"
+                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500"
                 >
                   <option value="">Select an option</option>
                   <option value="recycle">Regular Recycling</option>
@@ -146,7 +146,7 @@ export default function LifestyleAnalysis() {
                 <textarea
                   {...register('additional')}
                   rows={4}
-                  className="mt-1 p-2 block w-full rounded-md border-gray-300 shadow-sm outline-none focus:border-2 focus:border-green-500 focus:ring-green-500"
+                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500"
                   placeholder="Optional: Share any other details that might help us provide better recommendations..."
                 />
               </div>
