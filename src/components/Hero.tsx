@@ -1,6 +1,7 @@
 import { ArrowRight, Leaf, Droplet, Wind } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useInView } from 'react-intersection-observer';
+import { Link } from 'react-router-dom';
 
 export default function Hero() {
   const [ref, inView] = useInView({
@@ -59,13 +60,13 @@ export default function Hero() {
             variants={itemVariants}
             className="mt-8 max-w-md mx-auto sm:flex sm:justify-center md:mt-12"
           >
-            <a
-              href="/signup"
+            <Link
+              to="/signup"
               className="w-full flex items-center justify-center px-8 py-4 border border-transparent text-lg font-medium rounded-xl text-white bg-gradient-to-r from-green-600 to-teal-500 hover:from-green-700 hover:to-teal-600 transform hover:scale-105 transition-all duration-100 shadow-lg hover:shadow-xl"
             >
               Start Now
               <ArrowRight className="ml-2 h-5 w-5" />
-            </a>
+            </Link>
           </motion.div>
         </motion.div>
 
