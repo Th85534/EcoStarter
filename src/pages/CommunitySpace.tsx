@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useState, useEffect } from 'react';
-import { MessageSquare, ThumbsUp, Share2, Send, Image as ImageIcon, X } from 'lucide-react';
+import { MessageSquare, ThumbsUp, Share2, Send, Image as ImageIcon, X, Edit3 } from 'lucide-react';
 import { useAuthStore } from '../store/authStore';
 import { db } from '../lib/firebase';
 import { collection, query, orderBy, getDocs, addDoc, updateDoc, doc, arrayUnion, arrayRemove, Timestamp, deleteDoc } from 'firebase/firestore';
@@ -22,7 +22,7 @@ interface Post {
   userName: string;
   userAvatar: string;
   content: string;
-  image?: string;
+  image?: string | null;
   likes: string[];
   comments: Comment[];
   timestamp: Date;
@@ -38,6 +38,10 @@ export default function CommunitySpace() {
   const [loading, setLoading] = useState(false);
   const [commentContent, setCommentContent] = useState<{ [key: string]: string }>({});
   const [showComments, setShowComments] = useState<{ [key: string]: boolean }>({});
+  const [editingPostId, setEditingPostId] = useState<string | null>(null);
+  const [editingContent, setEditingContent] = useState<string>('');
+  const [editingImage, setEditingImage] = useState<File | null>(null);
+  const [editingImagePreview, setEditingImagePreview] = useState<string | null>(null);
   
   useEffect(() => {
     loadPosts();
@@ -137,7 +141,7 @@ export default function CommunitySpace() {
       console.error('Error updating like:', error);
     }
   };
-
+  console.log(profile?.profileImage)
   const handleComment = async (postId: string) => {
     if (!user || !commentContent[postId]?.trim()) return;
 
@@ -184,6 +188,68 @@ export default function CommunitySpace() {
     } catch (error) {
       console.error('Error deleting post:', error);
     }
+  };
+
+  const handleEdit = (post: Post) => {
+    setEditingPostId(post.id);
+    setEditingContent(post.content);
+    setEditingImagePreview(post.image || null);
+  };
+
+  const handleEditImageSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setEditingImage(file);
+      setEditingImagePreview(URL.createObjectURL(file));
+    }
+  };
+
+  const handleEditSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!user || !editingPostId || (!editingContent.trim() && !editingImage)) return;
+
+    setLoading(true);
+    try {
+      let imageUrl = editingImagePreview;
+      if (editingImage) {
+        imageUrl = await uploadImage(editingImage);
+      }
+
+      const postRef = doc(db, 'posts', editingPostId);
+      await updateDoc(postRef, {
+        content: editingContent,
+        userAvatar: profile?.profileImage || 'https://api.dicebear.com/7.x/avataaars/svg?seed=' + user.uid,
+        image: imageUrl,
+      });
+
+      setPosts(posts.map(post => {
+        if (post.id === editingPostId) {
+          return {
+            ...post,
+            content: editingContent,
+            userAvatar: profile?.profileImage || 'https://api.dicebear.com/7.x/avataaars/svg?seed=' + user.uid,
+            image: imageUrl,
+          };
+        }
+        return post;
+      }));
+
+      setEditingPostId(null);
+      setEditingContent('');
+      setEditingImage(null);
+      setEditingImagePreview(null);
+    } catch (error) {
+      console.error('Error editing post:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const cancelEdit = () => {
+    setEditingPostId(null);
+    setEditingContent('');
+    setEditingImage(null);
+    setEditingImagePreview(null);
   };
 
   return (
@@ -248,6 +314,72 @@ export default function CommunitySpace() {
         </form>
       </div>
 
+      {/* Edit Post */}
+      {editingPostId && (
+        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 mb-6">
+          <form onSubmit={handleEditSubmit}>
+            <textarea
+              placeholder="Edit your post..."
+              value={editingContent}
+              onChange={(e) => setEditingContent(e.target.value)}
+              className="w-full p-3 border border-gray-300 rounded-lg focus:ring-green-500 focus:border-green-500"
+              rows={3}
+            />
+            {editingImagePreview && (
+              <div className="mt-2 relative">
+                <img
+                  src={editingImagePreview}
+                  alt="Selected"
+                  className="w-full h-48 object-cover rounded-lg"
+                />
+                <button
+                  type="button"
+                  title='Remove image'
+                  onClick={() => {
+                    setEditingImage(null);
+                    setEditingImagePreview(null);
+                  }}
+                  className="absolute top-2 right-2 p-1 bg-gray-900 bg-opacity-50 rounded-full text-white hover:bg-opacity-70"
+                >
+                  <X className="h-4 w-4" />
+                </button>
+              </div>
+            )}
+            <div className="mt-3 flex justify-between items-center">
+              <label className="cursor-pointer">
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleEditImageSelect}
+                  className="hidden"
+                />
+                <div className="inline-flex items-center text-gray-700 hover:text-green-600">
+                  <ImageIcon className="h-5 w-5 mr-2" />
+                  Change Photo
+                </div>
+              </label>
+              <div className="flex space-x-2">
+                <button
+                  type="button"
+                  onClick={cancelEdit}
+                  className="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-gray-700 bg-gray-200 hover:bg-gray-300"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={loading || (!editingContent.trim() && !editingImage)}
+                  className="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-green-600 hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  <Send className="h-4 w-4 mr-2" />
+                  {loading ? 'Saving...' : 'Save'}
+                </button>
+              </div>
+            </div>
+          </form>
+        </div>
+      )}
+
       {/* Posts Feed */}
       <div className="space-y-6">
         {posts.map((post) => (
@@ -255,7 +387,7 @@ export default function CommunitySpace() {
             <div className="flex items-center justify-between">
               <div className="flex items-center">
                 <img
-                  src={post.userAvatar}
+                  src={post.userAvatar} 
                   alt={post.userName}
                   className="h-10 w-10 rounded-full object-cover"
                 />
@@ -272,14 +404,25 @@ export default function CommunitySpace() {
                 </div>
               </div>
               {user && post.userId === user.uid && (
-                <button
-                  type='button'
-                  title='Delete post'
-                  onClick={() => deletePost(post.id)}
-                  className="text-gray-400 hover:text-red-500"
-                >
-                  <X className="h-5 w-5" />
-                </button>
+
+                <div className="flex space-x-2">
+                  <button
+                    type='button'
+                    title='Edit post'
+                    onClick={() => handleEdit(post)}
+                    className="text-gray-400 hover:text-blue-500"
+                  >
+                    <Edit3 className="h-5 w-5" />
+                  </button>
+                  <button
+                    type='button'
+                    title='Delete post'
+                    onClick={() => deletePost(post.id)}
+                    className="text-gray-400 hover:text-red-500"
+                  >
+                    <X className="h-5 w-5" />
+                  </button>
+                </div>
               )}
             </div>
             <p className="mt-4 text-gray-900">{post.content}</p>
