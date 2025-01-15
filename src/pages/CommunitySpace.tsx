@@ -47,6 +47,21 @@ export default function CommunitySpace() {
     loadPosts();
   }, []);
 
+  useEffect(() => {
+    if (profile?.profileImage) {
+      setPosts(posts.map(post => {
+        if (post.userId === user?.uid) {
+          return {
+            ...post,
+            userAvatar: profile.profileImage
+          };
+        }
+        return post;
+      }));
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [profile?.profileImage]);
+
   const loadPosts = async () => {
     try {
       const q = query(collection(db, 'posts'), orderBy('timestamp', 'desc'));
