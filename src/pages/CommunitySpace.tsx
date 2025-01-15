@@ -47,42 +47,6 @@ export default function CommunitySpace() {
     loadPosts();
   }, []);
 
-  useEffect(() => {
-      
-
-    const updatePosts = async () => {
-        try {
-          const updatedPosts = await Promise.all(posts.map(async post => {
-            const postRef = doc(db, 'posts', post.id);
-            if(post.userId === user?.uid){
-              await updateDoc(postRef, {
-                userAvatar: profile?.profileImage,
-              });
-              if (post.userId === user?.uid) {
-                return {
-                  ...post,
-                  userAvatar: profile?.profileImage || '',
-                };
-              }
-              return {
-                ...post,
-                userAvatar: post.userAvatar || '',
-              };
-            }
-          }));
-          setPosts(updatedPosts as Post[]); 
-        } catch (error) {
-          console.error('Error updating user avatar:', error);
-        }
-      };
-      updatePosts();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [profile]);
-  console.log(posts.map(post =>{
-    if(post.userId === user?.uid){
-      return post.userAvatar
-    }
-  }))
   const loadPosts = async () => {
     try {
       const q = query(collection(db, 'posts'), orderBy('timestamp', 'desc'));
