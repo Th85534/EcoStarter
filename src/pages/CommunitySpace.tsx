@@ -48,25 +48,29 @@ export default function CommunitySpace() {
   }, []);
 
   useEffect(() => {
-      const updatePosts = async () => {
+      
+
+    const updatePosts = async () => {
         try {
           const updatedPosts = await Promise.all(posts.map(async post => {
             const postRef = doc(db, 'posts', post.id);
-            await updateDoc(postRef, {
-              userAvatar: profile?.profileImage,
-            });
-            if (post.userId === user?.uid) {
+            if(post.userId === user?.uid){
+              await updateDoc(postRef, {
+                userAvatar: profile?.profileImage,
+              });
+              if (post.userId === user?.uid) {
+                return {
+                  ...post,
+                  userAvatar: profile?.profileImage || '',
+                };
+              }
               return {
                 ...post,
-                userAvatar: profile?.profileImage || '',
+                userAvatar: post.userAvatar || '',
               };
             }
-            return {
-              ...post,
-              userAvatar: post.userAvatar || '',
-            };
           }));
-          setPosts(updatedPosts);
+          setPosts(updatedPosts as Post[]); 
         } catch (error) {
           console.error('Error updating user avatar:', error);
         }
