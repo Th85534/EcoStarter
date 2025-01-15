@@ -48,20 +48,37 @@ export default function CommunitySpace() {
   }, []);
 
   useEffect(() => {
-    if (profile?.profileImage) {
-      setPosts(posts.map(post => {
-        if (post.userId === user?.uid) {
-          return {
-            ...post,
-            userAvatar: profile.profileImage
-          };
+      const updatePosts = async () => {
+        try {
+          const updatedPosts = await Promise.all(posts.map(async post => {
+            const postRef = doc(db, 'posts', post.id);
+            await updateDoc(postRef, {
+              userAvatar: profile?.profileImage,
+            });
+            if (post.userId === user?.uid) {
+              return {
+                ...post,
+                userAvatar: profile?.profileImage || '',
+              };
+            }
+            return {
+              ...post,
+              userAvatar: post.userAvatar || '',
+            };
+          }));
+          setPosts(updatedPosts);
+        } catch (error) {
+          console.error('Error updating user avatar:', error);
         }
-        return post;
-      }));
-    }
+      };
+      updatePosts();
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [profile?.profileImage]);
-
+  }, [profile]);
+  console.log(posts.map(post =>{
+    if(post.userId === user?.uid){
+      return post.userAvatar
+    }
+  }))
   const loadPosts = async () => {
     try {
       const q = query(collection(db, 'posts'), orderBy('timestamp', 'desc'));
@@ -156,7 +173,6 @@ export default function CommunitySpace() {
       console.error('Error updating like:', error);
     }
   };
-  console.log(profile?.profileImage)
   const handleComment = async (postId: string) => {
     if (!user || !commentContent[postId]?.trim()) return;
 
